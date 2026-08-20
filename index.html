@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Neuro App CHSC — ASPECTS &amp; NIHSS stroke tools</title>
+    <meta
+      name="description"
+      content="Neuro App CHSC: a phone-first acute stroke toolkit. Capture a non-contrast head CT film with the camera and score ASPECTS region by region, or run a structured NIH Stroke Scale assessment. Educational and research use only."
+    />
+    <meta name="theme-color" content="#0e1114" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='16' rx='11' ry='13' fill='none' stroke='%234fc3d6' stroke-width='2.2'/%3E%3Cpath d='M16 3v26' stroke='%234fc3d6' stroke-width='1.6'/%3E%3Cpath d='M16 10c5 0 7 3 7 6s-2 6-7 6' fill='none' stroke='%23e8a33a' stroke-width='2.2'/%3E%3C/svg%3E"
+    />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=cabinet-grotesk@700,800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <link rel="preload" as="image" href="assets/chsc-1200.jpg" media="(min-width: 760px)" />
+    <link rel="preload" as="image" href="assets/chsc-800.jpg" media="(max-width: 759px)" />
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <a class="sr-only" href="#tool-aspects">Skip to tools</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-label="Neuro App CHSC logo" role="img">
+          <ellipse cx="16" cy="16" rx="11" ry="13" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M16 3v26" stroke="currentColor" stroke-width="1.4" />
+          <path d="M16 10c5 0 7 3 7 6s-2 6-7 6" fill="none" stroke="var(--color-accent)" stroke-width="2.2" />
+        </svg>
+        <div class="brand-text">
+          <strong>Neuro App CHSC</strong>
+          <span>Acute stroke assessment toolkit</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="ghost-btn icon-btn" data-bg-toggle aria-pressed="true" aria-label="Hide hospital background image" title="Toggle background image">
+          <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M3.5 6.5h17v11h-17z" /><path d="M3.5 15l4.5-4.5 3.5 3.5 3-3 6 6" /><circle cx="9" cy="9.5" r="1.3" /></svg>
+        </button>
+        <button type="button" class="ghost-btn" data-open-help aria-label="About this tool">About</button>
+        <button type="button" class="ghost-btn icon-btn" data-theme-toggle aria-label="Switch to light mode"></button>
+      </div>
+    </header>
+
+    <div class="notice" role="note">
+      <strong>Educational &amp; research use only.</strong> Both tools are manual scoring aids, not diagnostic
+      devices and not automatic readers. A trained clinician enters every finding. Nothing is uploaded — all
+      processing happens on this device.
+    </div>
+
+    <nav class="toolbar" aria-label="Select tool">
+      <button type="button" class="tool-tab" data-tool="aspects" aria-current="page">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+          <ellipse cx="12" cy="12" rx="8" ry="9.5" /><path d="M12 2.5v19" /><path d="M12 7c3.6 0 5 2.2 5 4.4s-1.4 4.4-5 4.4" />
+        </svg>
+        <span><strong>ASPECTS</strong><small>CT film · camera scoring</small></span>
+      </button>
+      <button type="button" class="tool-tab" data-tool="nihss">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+          <path d="M4 20V8m5 12V4m5 16v-7m5 7V10" /><path d="M3 20h18" />
+        </svg>
+        <span><strong>NIHSS</strong><small>15-item severity scale</small></span>
+      </button>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════════
+         TOOL A — ASPECTS
+         ══════════════════════════════════════════════════════ -->
+    <div id="tool-aspects" data-tool-panel="aspects">
+      <nav class="stepper" aria-label="ASPECTS workflow steps">
+        <button type="button" class="step" data-goto="1" aria-current="step"><span>1</span>Capture</button>
+        <button type="button" class="step" data-goto="2"><span>2</span>Align</button>
+        <button type="button" class="step" data-goto="3"><span>3</span>Window</button>
+        <button type="button" class="step" data-goto="4"><span>4</span>Score</button>
+        <button type="button" class="step" data-goto="5"><span>5</span>Report</button>
+      </nav>
+
+      <main>
+        <!-- ── STEP 1 ─────────────────────────────────────── -->
+        <section class="panel" id="step-capture" data-step="1">
+          <h1 class="panel-title">Capture the CT film</h1>
+          <p class="panel-lede">
+            Photograph the film on a lightbox or bright screen, straight on, filling the frame. Turn off the flash —
+            glare destroys grey–white differentiation.
+          </p>
+
+          <div class="capture-grid">
+            <button type="button" class="primary-btn" data-start-camera>
+              <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+                <path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.2l1-1.8h6.6l1 1.8h1.2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z" />
+                <circle cx="12" cy="12.5" r="3.4" />
+              </svg>
+              Open camera
+            </button>
+            <label class="secondary-btn">
+              <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+                <path d="M12 16V4m0 0L8 8m4-4 4 4" /><path d="M4 16v2.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V16" />
+              </svg>
+              Choose photo
+              <input type="file" accept="image/*" capture="environment" data-file-input hidden />
+            </label>
+            <button type="button" class="secondary-btn" data-load-demo>Load demo phantom</button>
+          </div>
+
+          <div class="camera-wrap" data-camera-wrap hidden>
+            <video data-video playsinline autoplay muted></video>
+            <div class="camera-guide" aria-hidden="true"></div>
+            <div class="camera-bar">
+              <button type="button" class="shutter" data-shutter aria-label="Take picture"></button>
+              <button type="button" class="ghost-btn" data-stop-camera>Cancel</button>
+            </div>
+          </div>
+          <p class="hint" data-camera-hint hidden></p>
+          <div class="q-chip" data-q-chip hidden></div>
+
+          <div class="tips">
+            <h2>Getting a usable photo</h2>
+            <ul role="list">
+              <li><strong>Backlight, don't flash.</strong> Lightbox or a white full-screen laptop background behind the film.</li>
+              <li><strong>Shoot square on.</strong> Keep the sensor parallel to the film; step 2 can only fix mild keystone.</li>
+              <li><strong>One level per capture.</strong> Score the ganglionic and supraganglionic levels separately.</li>
+              <li><strong>Prefer the DICOM window.</strong> A photo of a monitor at stroke window (W35–40/L35–40) beats a photo of printed film.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ── STEP 2 ─────────────────────────────────────── -->
+        <section class="panel" id="step-align" data-step="2" hidden>
+          <h1 class="panel-title">Align the slice</h1>
+          <p class="panel-lede">
+            Drag the four handles to the corners of the slice you want to score. This removes keystone distortion so
+            left and right hemispheres are geometrically comparable.
+          </p>
+          <div class="stage" data-align-stage>
+            <canvas data-align-canvas></canvas>
+            <div class="handles" data-handles></div>
+          </div>
+          <div class="row-btns">
+            <button type="button" class="secondary-btn" data-reset-corners>Reset corners</button>
+            <button type="button" class="secondary-btn" data-rotate>Rotate 90°</button>
+            <button type="button" class="primary-btn" data-apply-rectify>Apply &amp; continue</button>
+            <button type="button" class="ghost-btn" data-skip-rectify>Skip — already square</button>
+          </div>
+        </section>
+
+        <!-- ── STEP 3 ─────────────────────────────────────── -->
+        <section class="panel" id="step-window" data-step="3" hidden>
+          <h1 class="panel-title">Window the image</h1>
+          <p class="panel-lede">
+            A photograph has no Hounsfield units, so this is a display-contrast stretch, not true windowing. It can
+            reveal loss of grey–white differentiation that survived the print, but it cannot recover data the film
+            discarded.
+          </p>
+
+          <div class="q-chip" data-q-chip hidden></div>
+
+          <div class="viewer" data-viewer>
+            <canvas data-work-canvas></canvas>
+          </div>
+
+          <div class="presets">
+            <button type="button" class="chip" data-preset="reset">Original</button>
+            <button type="button" class="chip" data-preset="stroke">Grey–white boost</button>
+            <button type="button" class="chip" data-preset="narrow">Narrow stretch</button>
+            <button type="button" class="chip" data-preset="invert">Invert</button>
+            <button type="button" class="chip" data-preset="clahe">Local contrast</button>
+          </div>
+
+          <div class="sliders">
+            <label>Brightness <output data-out="brightness">0</output>
+              <input type="range" min="-100" max="100" value="0" data-adj="brightness" />
+            </label>
+            <label>Contrast <output data-out="contrast">0</output>
+              <input type="range" min="-100" max="200" value="0" data-adj="contrast" />
+            </label>
+            <label>Gamma <output data-out="gamma">1.00</output>
+              <input type="range" min="30" max="260" value="100" data-adj="gamma" />
+            </label>
+            <label>Window centre <output data-out="level">128</output>
+              <input type="range" min="0" max="255" value="128" data-adj="level" />
+            </label>
+            <label>Window width <output data-out="width">255</output>
+              <input type="range" min="10" max="255" value="255" data-adj="width" />
+            </label>
+            <label class="switch"><input type="checkbox" data-adj="invert" /> Invert greyscale</label>
+            <label class="switch"><input type="checkbox" data-adj="mirror" /> Mirror (compare hemispheres)</label>
+          </div>
+
+          <div class="row-btns">
+            <button type="button" class="secondary-btn" data-back-to="2">Back</button>
+            <button type="button" class="primary-btn" data-goto="4">Continue to scoring</button>
+          </div>
+        </section>
+
+        <!-- ── STEP 4 ─────────────────────────────────────── -->
+        <section class="panel" id="step-score" data-step="4" hidden>
+          <h1 class="panel-title">Score the 10 regions</h1>
+          <p class="panel-lede">
+            ASPECTS is scored on the <strong>affected hemisphere only</strong>. Subtract one point for each region
+            showing early ischaemic change — hypoattenuation or focal swelling with loss of grey–white
+            differentiation. Compare against the mirror-image region on the normal side.
+          </p>
+
+          <div class="side-toggle" role="radiogroup" aria-label="Affected hemisphere">
+            <button type="button" role="radio" aria-checked="true" data-side="left">Left hemisphere</button>
+            <button type="button" role="radio" aria-checked="false" data-side="right">Right hemisphere</button>
+          </div>
+
+          <div class="score-layout">
+            <div class="map-col">
+              <div class="level-block">
+                <h2>Ganglionic level <span>thalamus / basal ganglia</span></h2>
+                <div class="brain-map" data-map="ganglionic"></div>
+              </div>
+              <div class="level-block">
+                <h2>Supraganglionic level <span>rostral to basal ganglia</span></h2>
+                <div class="brain-map" data-map="supra"></div>
+              </div>
+              <p class="hint">
+                Schematic only — region boundaries are approximate and not a registration atlas. Tap a region to
+                toggle it.
+              </p>
+            </div>
+
+            <div class="list-col">
+              <div class="thumb-wrap"><canvas data-thumb-canvas></canvas></div>
+              <ul class="region-list" data-region-list role="list"></ul>
+            </div>
+          </div>
+
+          <div class="scoreboard" data-scoreboard>
+            <div class="score-num"><span data-score>10</span><small>/ 10</small></div>
+            <div class="score-meta">
+              <p data-score-label>No early ischaemic change marked</p>
+              <p class="score-sub" data-score-regions>0 of 10 regions abnormal</p>
+            </div>
+          </div>
+
+          <div class="interp" data-interp></div>
+
+          <div class="row-btns">
+            <button type="button" class="secondary-btn" data-back-to="3">Back</button>
+            <button type="button" class="secondary-btn" data-clear-regions>Clear all</button>
+            <button type="button" class="primary-btn" data-goto="5">Build report</button>
+          </div>
+        </section>
+
+        <!-- ── STEP 5 ─────────────────────────────────────── -->
+        <section class="panel" id="step-report" data-step="5" hidden>
+          <h1 class="panel-title">ASPECTS report</h1>
+          <p class="panel-lede">Everything below is generated on this device. Nothing is uploaded.</p>
+
+          <div class="meta-grid">
+            <label>Case / study ID <input type="text" data-meta="caseId" placeholder="e.g. AS-014" /></label>
+            <label>Slice level captured
+              <select data-meta="level">
+                <option value="Ganglionic">Ganglionic</option>
+                <option value="Supraganglionic">Supraganglionic</option>
+                <option value="Both">Both</option>
+              </select>
+            </label>
+            <label>Time from onset (h) <input type="text" data-meta="onset" placeholder="e.g. 3.5" /></label>
+            <label>Reader <input type="text" data-meta="reader" placeholder="initials" /></label>
+            <label class="full">Notes <textarea rows="2" data-meta="notes" placeholder="Image quality, disagreements, dense MCA sign…"></textarea></label>
+          </div>
+
+          <div class="report-preview"><canvas data-report-canvas></canvas></div>
+
+          <div class="row-btns">
+            <button type="button" class="secondary-btn" data-back-to="4">Back</button>
+            <button type="button" class="secondary-btn" data-copy-text>Copy text report</button>
+            <button type="button" class="secondary-btn" data-download-json>Download JSON</button>
+            <button type="button" class="primary-btn" data-download-png>Download PNG report</button>
+          </div>
+          <p class="hint" data-copy-status aria-live="polite"></p>
+        </section>
+      </main>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         TOOL B — NIHSS
+         ══════════════════════════════════════════════════════ -->
+    <div id="tool-nihss" data-tool-panel="nihss" hidden>
+      <main>
+        <section class="panel">
+          <h1 class="panel-title">NIH Stroke Scale</h1>
+          <p class="panel-lede">
+            Fifteen items, total 0–42. Score what you see, not what you think the patient can do. Administer items
+            in order, do not go back and change scores, and do not coach the patient.
+          </p>
+
+          <div class="nihss-rules">
+            <p><strong>Ground rules from the NIH scale instructions.</strong> Record answers while administering the exam and work quickly. Except where indicated, the patient should not be coached. If the patient gives up or refuses, the score for that item is the deficit observed. Items marked <em>UN</em> (untestable — amputation, joint fusion, intubation) contribute 0 to the total and are flagged separately in the report.</p>
+          </div>
+
+          <div class="meta-grid">
+            <label>Case / patient ID <input type="text" data-nmeta="caseId" placeholder="e.g. NS-021" /></label>
+            <label>Date &amp; time of assessment <input type="text" data-nmeta="when" placeholder="auto if blank" /></label>
+            <label>Time from onset (h) <input type="text" data-nmeta="onset" placeholder="e.g. 2.0" /></label>
+            <label>Examiner <input type="text" data-nmeta="examiner" placeholder="initials" /></label>
+          </div>
+
+          <div class="nihss-items" data-nihss-items></div>
+
+          <div class="scoreboard" data-nscoreboard>
+            <div class="score-num"><span data-nscore>0</span><small>/ 42</small></div>
+            <div class="score-meta">
+              <p data-nlabel>No stroke symptoms recorded</p>
+              <p class="score-sub" data-nprogress>0 of 15 items scored</p>
+            </div>
+          </div>
+
+          <div class="interp" data-ninterp></div>
+
+          <label class="full nihss-notes">Clinical notes
+            <textarea rows="2" data-nmeta="notes" placeholder="Handedness, aphasia limiting testing, repeat exam timing…"></textarea>
+          </label>
+
+          <div class="report-preview"><canvas data-nreport-canvas></canvas></div>
+
+          <div class="row-btns">
+            <button type="button" class="secondary-btn" data-nclear>Reset all items</button>
+            <button type="button" class="secondary-btn" data-ncopy>Copy text report</button>
+            <button type="button" class="secondary-btn" data-njson>Download JSON</button>
+            <button type="button" class="primary-btn" data-npng>Download PNG report</button>
+          </div>
+          <p class="hint" data-nstatus aria-live="polite"></p>
+        </section>
+      </main>
+
+      <div class="sticky-score" data-sticky hidden>
+        <div>
+          <strong data-sticky-score>0</strong><span>/ 42</span>
+        </div>
+        <span class="sticky-band" data-sticky-band>No stroke symptoms</span>
+        <button type="button" class="primary-btn" data-jump-report>Report</button>
+      </div>
+    </div>
+
+    <footer>
+      <div class="foot-inner">
+        <p>
+          <strong>ASPECTS</strong> — scoring definition and the validated <strong>&lt;8 vs ≥8</strong> dichotomy per the
+          <a href="https://www.mdcalc.com/calc/10046/alberta-stroke-program-early-ct-score-aspects" target="_blank" rel="noopener">MDCalc ASPECTS reference</a>;
+          region set per the
+          <a href="https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2016.00245/full" target="_blank" rel="noopener">Frontiers in Neurology critical review</a>.
+        </p>
+        <p>
+          <strong>NIHSS</strong> — item wording and scale definitions from the
+          <a href="https://www.ninds.nih.gov/sites/default/files/documents/NIH-Stroke-Scale_updatedFeb2024_508.pdf" target="_blank" rel="noopener">official NINDS NIH Stroke Scale (Feb 2024)</a>;
+          calculator reference
+          <a href="https://www.mdcalc.com/calc/715/nih-stroke-scale-score-nihss" target="_blank" rel="noopener">MDCalc NIHSS</a>;
+          severity strata per
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6950922/" target="_blank" rel="noopener">published NIHSS categories</a>.
+        </p>
+        <p class="fine">
+          Neuro App CHSC. Not a medical device. No regulatory clearance. No automated image interpretation. All
+          processing is client-side.
+        </p>
+      </div>
+    </footer>
+
+    <dialog data-quality class="quality-dialog">
+      <article>
+        <h2 data-q-title>Image quality check</h2>
+        <p class="q-lede" data-q-lede></p>
+        <ul class="q-metrics" data-q-metrics role="list"></ul>
+        <div class="q-advice" data-q-advice></div>
+        <div class="row-btns">
+          <button type="button" class="secondary-btn" data-q-retake>Retake photo</button>
+          <button type="button" class="primary-btn" data-q-continue>Continue anyway</button>
+        </div>
+        <p class="fine">
+          This is a technical check of the photograph only — sharpness, resolution, exposure, glare and colour cast.
+          It says nothing about the CT itself and never looks for ischaemia.
+        </p>
+      </article>
+    </dialog>
+
+    <dialog data-help>
+      <article>
+        <h2>About Neuro App CHSC</h2>
+        <p>
+          Two bedside tools in one offline-capable web app: a camera front end for manual <strong>ASPECTS</strong>
+          scoring of non-contrast head CT, and a structured <strong>NIHSS</strong> assessment with a running total.
+        </p>
+        <h3>What the ASPECTS tool does</h3>
+        <p>
+          Capture, perspective correction, contrast stretching and local contrast enhancement, structured region
+          marking on a schematic, score arithmetic, and an exportable record.
+        </p>
+        <h3>What it deliberately does not do</h3>
+        <p>
+          It does not detect ischaemia. A photograph of a film has already been windowed, gamma-corrected and
+          JPEG-compressed, so the 2–4 HU attenuation drop that defines early ischaemic change is largely gone.
+          Automated readers work on DICOM volumes and still only reach moderate-to-good agreement with experts. Any
+          auto-scoring claim here would be unsafe and would also make the app a regulated device.
+        </p>
+        <h3>Region set</h3>
+        <p>
+          Ganglionic level: caudate (C), lentiform (L), internal capsule (IC), insula (I), M1, M2, M3.
+          Supraganglionic level: M4, M5, M6. Each abnormal region subtracts one point from 10.
+        </p>
+        <h3>NIHSS notes</h3>
+        <p>
+          Fifteen items, 0–42. Untestable items contribute 0 and are flagged. A low total does not exclude stroke —
+          posterior circulation and lacunar events can score very low, and the scale weights left-hemisphere
+          deficits more heavily.
+        </p>
+        <h3>Suggested validation study</h3>
+        <p>
+          Two readers score the same case set on paper and in the app; report ICC and weighted kappa for app-vs-paper
+          and reader-vs-reader agreement, plus time-to-score. That is a publishable methods paper.
+        </p>
+        <button type="button" class="primary-btn" data-close-help>Close</button>
+      </article>
+    </dialog>
+
+    <script src="app.js"></script>
+    <script src="nihss.js"></script>
+  </body>
+</html>
